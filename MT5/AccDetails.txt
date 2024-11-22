@@ -1,6 +1,0 @@
-sdcreek240@gmail.com
-Aidan#1947
-
-MetaTrader login: 331030623
-Platform Type: MT5
-MetaTrader Server: XMGlobal-MT5 9
