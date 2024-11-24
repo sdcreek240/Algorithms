@@ -44,7 +44,8 @@ def initWindow():
     root.attributes("-alpha", 0.9)
 
     #Set baclground color
-    root.configure(background="yellow")
+    # root.configure(background="yellow")
+    root.config(bg="dark grey")
 
     #Set min size and max size
     # root.minsize(200, 200)#Min size
@@ -52,8 +53,6 @@ def initWindow():
 
     # Set up app
     app = CandlesApp(root)
-
-    app
 
     # Start tkinter event loop
     root.mainloop()
