@@ -65,7 +65,7 @@ class CandlesApp:
         #Load image to be 'edited'
         image = PhotoImage(file="Algorithms/LearningGUI_#1/Images/Large.gif")
         originalImage = image.subsample(3,3) #Resize image using subsample
-        Label(leftFrame, image=originalImage).grid(row=1, column=1, padx=5, pady=5)
+        Label(leftFrame, image=originalImage).grid(row=1, column=0, padx=5, pady=5)
 
         #Display image in rFrame
         Label(rFrame, image=image).grid(row=0, column=0, padx=5, pady=5)
@@ -85,14 +85,29 @@ class CandlesApp:
         Label(tbFrame, text="Resize").grid(row=4, column=0, padx=5, pady=5)
         Label(tbFrame, text="Exposure").grid(row=5, column=0, padx=5, pady=5)
 
+        #BUTTONS
+        turnOn = Button(leftFrame, text="ON", width=10, height=5).grid(row=3, column=0, ipadx=5, ipady=10)
+        tournOff = Button(leftFrame, text="Terminate", width=10, height=5, command=root.quit, bg="red", font="fsBold").grid(row=3, column=1, ipadx=5, ipady=10)#?
+
+        #Define volume functions:
+        def printNar():
+            print("Ek is n nar")
+
+        printNarButton = Button(leftFrame, text="Wie is n nar?", width=10, height=5, bg="blue", command=printNar).grid(row=2, column=1, ipadx=5, ipady=10)
+
+        #Button parameters:
+        #activebackground & activeforeground: set back&fore-ground colors when cursor is over button
+        #bd - sets border in pixels
+        #bg & fg - set back- & foreground
+        #font - choose text font for button !!
+        #image - ise image as button rather than text
 
 
+        root.mainloop()
+      
 
 
+from main import *
 
-
-        
-
-
-
-
+if __name__ == "__main__":#Run CandlesApp only with initWondow from main
+    initWindow()

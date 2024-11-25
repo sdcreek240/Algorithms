@@ -54,9 +54,6 @@ def initWindow():
     # Set up app
     app = CandlesApp(root)
 
-    # Start tkinter event loop
-    root.mainloop()
-
 def main():
     print("Ek is n nar?")
 
