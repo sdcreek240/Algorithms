@@ -20,7 +20,8 @@ timeframe_map = {
 
 #Initialize MetaTrader5 connection
 def initMT5():
-
     if not mt5.initialize(login=config.MT5_LOGIN, password=config.MT5_PASSWORD, server=config.MT5_SERVER):
-        print("Failed to initialize MT5, error code:", mt5.last_error())
-        quit()
+        print("Failed to initialize MetaTrader 5")
+        raise RuntimeError("MetaTrader 5 initialization failed.")
+    else:
+        print("MetaTrader 5 initialized successfully.")

@@ -8,4 +8,5 @@ Algorithms, forming the path to machine learning and applied statistics.
     Learn Tkinter for simple GUI 
 
 #2 Setup simple gui application to fetch historical data and display candle sticks in GUI and terminal
-
+    -Create debug GUI - basically just raw data
+    

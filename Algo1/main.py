@@ -6,14 +6,18 @@ from debugApp import *
 
 def initDebugApp():
 
-    root = tk.Tk()
-    root.title("Debug Application")
-    root.geometry("1600x900+175+50")
-    root.attributes("-alpha", 0.6)
-    root.config(bg="grey")
-    # root.resizable(False)
+    try:
+        root = tk.Tk()
+        root.title("Debug Application")
+        root.geometry("1600x900+175+50")
+        root.attributes("-alpha", 0.8)
+        root.config(bg="grey")
+        # root.resizable(False)
 
-    app = debugApp(root)
+        app = debugApp(root)
+        
+    except Exception as e:
+        print(f"Error initializing Debug Application: {e}")
 
 
 
