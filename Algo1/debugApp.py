@@ -12,8 +12,29 @@ from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from metaInterface import timeframe_map
 from metaInterface import mt5
 
+import tkinter as tk
+
+import mplfinance as mpf
 
 class debugApp:    
+
+    def centerWindow(self):
+        
+        self.root.update_idletasks()
+
+        # width = self.root.winfo_width()#Retireve current width of the root window
+        # height = self.root.winfo_height()
+        width = 1500
+        height = 750
+
+        screenW = self.root.winfo_screenwidth()
+        screenH = self.root.winfo_screenheight()
+
+        x = (screenW - width) // 2#Division with truncation
+        y = ((screenH - height) // 2) - 50
+
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+        # self.root.state("zoomed")#Windowed full screen
 
     def LeftFrame(self):
         
@@ -38,16 +59,29 @@ class debugApp:
         self.timeframe_map = timeframe_map
 
         self.cmbTimeframe = ttk.Combobox(self.frmSample, values=list(self.timeframe_map.keys()), width=8, cursor="dot")
-        self.cmbTimeframe.grid(row=0, column=2, padx=5)
+        self.cmbTimeframe.grid(row=0, column=1, padx=5)
         self.cmbTimeframe.set("5M")
 
+        #Add Line/candleStick option and boolVar for comparing bool val
+        self.isLineChart = BooleanVar(self.root)
+        self.isLineChart.set(True)
+        
+        self.chkLine = Checkbutton(self.frmSample, fg="teal", text="Line chart", 
+                                    variable=self.isLineChart, 
+                                    onvalue=True, offvalue=False,
+                                    width=8)
+        self.chkLine.grid(row=1, column=0)
+
         #Create Button to fetch live Data
-        self.btnFetchLive = Button(self.frmSample, text="Live", width=4, height=2, 
+        self.btnGenerate = Button(self.frmSample, text="Generate", width=8, height=2, 
                               command=self.FetchLive,
                               font=("Terminal", 10, "bold"))
-        self.btnFetchLive.grid(row=1, column=1, padx=5)
+        self.btnGenerate.grid(row=2, column=0)
 
-        #Figure out how to retrieve values from comboboxes and write function to plot chart of data fetched
+        #Create Button to clear chart
+        self.btnClear = Button(self.frmSample, text="Clear", width=8, height=2, 
+                                font=("Terminal", 10, "bold"))
+        self.btnClear.grid(row=2, column=1)
 
     def LiveFrame(self):
 
@@ -56,43 +90,61 @@ class debugApp:
         self.frmLive.grid_propagate(False)
 
         # Prepare matplotlib figure
-        self.figure = Figure(figsize=(8, 6), dpi=100)
-        self.ax = self.figure.add_subplot(111)
-        self.ax.set_title("Live Chart")
-        self.canvas = FigureCanvasTkAgg(self.figure, self.frmLive)
+        self.figure = Figure(figsize=(8, 6), dpi=100)#Create matplot figure - figsize(width", height") | dpi- sets resolution
+        self.ax = self.figure.add_subplot(111)#Add plot to figure - 1row | 1col | 1st plot
+        self.ax.set_title(f"Live Chart")
+        self.canvas = FigureCanvasTkAgg(self.figure, self.frmLive)#Embed matplotlib into tk widget
         self.canvas.get_tk_widget().pack(fill=BOTH, expand=True)
-
+            
     def FetchLive(self):
 
         symbol = self.cmbSymbol.get()
         timeframe = self.timeframe_map.get(self.cmbTimeframe.get())
 
         def updateChart():
+
             rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, 100)
+
             if rates is not None:
+                
                 df = pd.DataFrame(rates)
                 df['time'] = pd.to_datetime(df['time'], unit='s')
+                df.dropna()
 
-                if not hasattr(self, 'line'):  # Create the plot initially
-                    self.line, = self.ax.plot(df['time'], df['close'], label="Price")
-                    self.ax.legend()
-                    self.ax.set_title(f"{symbol} Live Chart")
-                    self.ax.set_xlabel("Time")
-                    self.ax.set_ylabel("Price")
-                else:  # Update data without clearing
-                    self.line.set_data(df['time'], df['close'])
-                    self.ax.relim()
-                    self.ax.autoscale_view()
+                # Clear the plot
+                self.ax.clear()
 
+                # Check if the checkbox is True or False
+                if self.isLineChart.get():
+                    # Line chart logic
+                    self.ax.plot(df['time'], df['close'], label="Price")
+                    self.ax.set_title(f"{symbol} Line Chart")
+                else:
+                    # Candlestick chart logic using mplfinance
+                    df = df.rename(columns={
+                        'time': 'Date',
+                        'open': 'Open',
+                        'high': 'High',
+                        'low': 'Low',
+                        'close': 'Close'
+                    })
+
+                    mpf.plot(
+                        df,
+                        type='candle',
+                        ax=self.ax,
+                        style='charles',
+                        datetime_format='%H:%M',
+                        ylabel="Price",
+                    )
+
+                self.ax.set_xlabel("Time")
+                self.ax.set_ylabel("Price")
+                self.ax.legend()
                 self.canvas.draw()
 
-            # Repeat update every 500ms (half second)
-            self.frmLive.after(500, updateChart)
-
-        # Add a toolbar for zoom/pan/reset functionality
-        toolbar = NavigationToolbar2Tk(self.canvas, self.frmLive)
-        toolbar.update()
-        toolbar.pack(side=TOP, fill=X)
+            # Repeat update every 1000ms
+            self.frmLive.after(1000, updateChart)
 
         updateChart()
 
@@ -101,23 +153,14 @@ class debugApp:
 
         self.root = root
         
-
         self.LeftFrame()
         self.LiveFrame()
 
-
+        self.centerWindow()
 
         self.root.mainloop()
 
-
+from main import *
 
 if __name__=="__main__":
-
-    root = Tk()
-
-    root.title("Debug Application")
-    root.geometry("1600x900+175+50")
-    root.attributes("-alpha", 0.9)
-    root.config(bg="grey", bd=5)
-
-    app = debugApp(root)
+    bootMain()
