@@ -9,7 +9,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
-from metaInterface import timeframe_map
+from metaInterface import timeframe_map, symbols
 from metaInterface import mt5
 
 import tkinter as tk
@@ -49,7 +49,7 @@ class debugApp:
         self.frmSample.grid(row=0, column=0)
 
         #Define list for symbol
-        self.symbols = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD"]
+        self.symbols = symbols
 
         self.cmbSymbol = ttk.Combobox(self.frmSample, values=self.symbols, width=8, cursor="dot")
         self.cmbSymbol.set(self.symbols[0])
@@ -101,52 +101,6 @@ class debugApp:
         symbol = self.cmbSymbol.get()
         timeframe = self.timeframe_map.get(self.cmbTimeframe.get())
 
-        def updateChart():
-
-            rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, 100)
-
-            if rates is not None:
-                
-                df = pd.DataFrame(rates)
-                df['time'] = pd.to_datetime(df['time'], unit='s')
-                df.dropna()
-
-                # Clear the plot
-                self.ax.clear()
-
-                # Check if the checkbox is True or False
-                if self.isLineChart.get():
-                    # Line chart logic
-                    self.ax.plot(df['time'], df['close'], label="Price")
-                    self.ax.set_title(f"{symbol} Line Chart")
-                else:
-                    # Candlestick chart logic using mplfinance
-                    df = df.rename(columns={
-                        'time': 'Date',
-                        'open': 'Open',
-                        'high': 'High',
-                        'low': 'Low',
-                        'close': 'Close'
-                    })
-
-                    mpf.plot(
-                        df,
-                        type='candle',
-                        ax=self.ax,
-                        style='charles',
-                        datetime_format='%H:%M',
-                        ylabel="Price",
-                    )
-
-                self.ax.set_xlabel("Time")
-                self.ax.set_ylabel("Price")
-                self.ax.legend()
-                self.canvas.draw()
-
-            # Repeat update every 1000ms
-            self.frmLive.after(1000, updateChart)
-
-        updateChart()
 
     def __init__(self, root):
         print("---Entry_debugApp---")

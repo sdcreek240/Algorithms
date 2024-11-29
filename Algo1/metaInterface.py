@@ -9,6 +9,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'MT5'))
 
 import config
 
+symbols = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD"]
+
 timeframe_map = {
             "5M": mt5.TIMEFRAME_M5,
             "15M": mt5.TIMEFRAME_M15,
