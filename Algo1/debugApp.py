@@ -7,7 +7,7 @@ import time
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+# from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
 from metaInterface import timeframe_map, symbols
 from metaInterface import mt5
@@ -100,7 +100,6 @@ class debugApp:
 
         symbol = self.cmbSymbol.get()
         timeframe = self.timeframe_map.get(self.cmbTimeframe.get())
-
 
     def __init__(self, root):
         print("---Entry_debugApp---")
